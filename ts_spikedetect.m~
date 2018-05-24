@@ -1,4 +1,5 @@
 if ~exist('D'),   D = ts_housekeeping;    end
+fs    = filesep;
 Fdata = D.Fdata;
 
 edflist = cellstr(spm_select('FPlist', Fdata, '^*.edf$'));
@@ -70,9 +71,24 @@ plstrt = -3 * hdr.Fs;
 plstop  = 7 * hdr.Fs;
 
 for g = 1:length(gS)
-    thischid = chid = gS(g).c;
+    thischid = chid(unique(gS(g).c));
+    srt = -3 * hdr.Fs + min(gS(g).t);
+    stp  = 7 * hdr.Fs + min(gS(g).t);
+    dat  = ft_read_data(gS(g).f, 'begsample', srt, 'endsample', stp-1);
+    dat  = dat(thischid,:);
     
+    clf
+    for d = 1:size(dat,1)
+        plot(dat(d,:) + 1000*d); hold on 
+    end
+    pause();
+end
 
+%% Plot scatter plot position v time
+%--------------------------------------------------------------------------
+for g = 1:length(gS)
+    [val id] = min(gS(g).t);
+    scatter(gS(g).t - val, gS(g).c - gS(g).c(id), 100, 'filled'); hold on
 end
     
     
