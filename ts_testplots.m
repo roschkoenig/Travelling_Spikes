@@ -3,7 +3,7 @@ Fdata   = D.Fdata;
 fs      = filesep;
 load([Fdata fs 'SPK.mat']);
 
-%% Load metdata
+% Load metdata
 %--------------------------------------------------------------------------
 [num txt rw] = xlsread(spm_select('FPList', Fdata, '^.*.xlsx$'));
 [r elcol]    = find(strcmp(rw, 'electrode'));
@@ -15,43 +15,6 @@ for s = 1:length(SPK)
     thise       = SPK(s).El.eoi;
     lesrow      = find(strcmp(rw(:, elcol), thise));
     SPK(s).les  = [thise num2str(rw{lesrow, nmcol})];
-end
-
-%%
-
-locs = [];
-tims = [];
-k    = 0;
-clear slope sS
-
-for s = 1:length(SPK)
-    gS = SPK(s).gS;
-    ts = [];
-    for g = 1:length(gS)
-        [val id] = min(gS(g).t);
-        scatter(gS(g).t - val, gS(g).c - gS(g).c(id), 100, 'filled'); hold on
-        
-        ts = [ts gS(g).t - val];
-        
-        locs = [gS(g).c - gS(g).c(id), locs];
-        tims = [gS(g).t - val, tims];
-        
-%         lm = fitlm(gS(g).t - val, gS(g).c - gS(g).c(id));
-%         if lm.Coefficients.pValue(2) < 0.05
-%             k = k + 1;
-%           	
-%             sS(k)       = SPK(s);
-%             sS(k).gS    = SPK(s).gS(g);            
-%             slope(k)    = lm.Coefficients{2,1};
-%         end
-        
-    end
-    
-    set(gca, 'Xtick', 0:20:max(ts))
-    set(gca, 'XTickLabel', 0:20:max(ts));
-    ylabel('< outwards |            | inwards >')
-    xlabel('time in samples');
-    plot([0 Inf], [0 0], 'k');    
 end
 
 %% Plot some average waveforms - average the first spike for each electrode
@@ -139,24 +102,29 @@ for s = 1:length(sk)
     
     % Plotting routines
     %======================================================================
-    % Scatter time vs distance from original spike
-    %----------------------------------------------------------------------
-    figure(1), subplot(2,1,1)
-    
-    scatter([PK.early]- min([PK.early]), lesdis, 100, 'filled'); hold on
-
-    subplot(2,1,2)
-    scatter([PK.late] - min([PK.late]), lesdis, 100, 'filled'); hold on
+%     % Scatter time vs distance from original spike
+%     %----------------------------------------------------------------------
+%     figure(1), subplot(2,1,1)
+%     
+%     scatter([PK.early]- min([PK.early]), lesdis, 100, 'filled'); hold on
+% 
+%     subplot(2,1,2)
+%     scatter([PK.late] - min([PK.late]), lesdis, 100, 'filled'); hold on
 
 
     % Plot settings
+    % figure(2)
+    
     cmap = flip(cbrewer('div', 'Spectral', max(lesdis)+1));
-    figure(2), subplot(ceil(length(sk)/2),2,s)
+    subplot(ceil(length(sk)/2),2,s)
 
     for m = 1:size(md,1)
-        plot(md(m,:), 'color', cmap(lesdis(m)+1,:)); hold on
+        plot(md(m,:) + 300*(m-1), 'color', cmap(lesdis(m)+1,:), 'linewidth', 2); hold on
         xlim([1 Inf]);
     end
+    title(['Electrode ' sk(s).el])
+    set(gca, 'YTick', 0:300:(300*(m-1)));
+    set(gca, 'YTickLabel', sk(s).lbl);
 
 end
 
