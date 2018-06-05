@@ -1,5 +1,4 @@
-if ~exist('D'),   D = ts_housekeeping;    end
-
+D           = ts_housekeeping;   
 eoi         = {'A', 'B', 'C', 'D', 'E', 'F', 'B''', 'C''', 'F''' };
 fs          = filesep;
 Fdata       = D.Fdata;
@@ -7,9 +6,10 @@ edflist     = cellstr(spm_select('FPlist', Fdata, '^*.edf$'));
 doplot      = 0;
 clear E
 
-%% Loop through electrodes (i.e. shanks) of interest
+% Loop through electrodes (i.e. shanks) of interest
 %==========================================================================
 for ei = 1:length(eoi)
+    clear Sp
     disp(['Currently on electrode ' num2str(ei) ' of ' num2str(length(eoi)) ': ' eoi{ei}]);
     disp('Loading datasets');
     

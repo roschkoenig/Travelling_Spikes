@@ -107,21 +107,16 @@ end
 
 %%
 for s = 1:length(sk) 
-    
     % Calculate mean wave forms
     %----------------------------------------------------------------------
     md      = squeeze(mean(sk(s).d,1));
 
     early   = fix(.175*h.Fs : .225*h.Fs); 
-    mid     = fix(.250*h.Fs : .350*h.Fs);
+    midd    = fix(.250*h.Fs : .350*h.Fs);
     late    = fix(.350*h.Fs : .600*h.Fs);
 
-    clear PK
-    for m = 1:size(md,1)
-        [val loc] = findpeaks(md(m,early));     PK(m).early = early(loc);   try PK(m).early = PK(m).early(1);   catch PK(m).early = NaN;    end
-        [val loc] = findpeaks(md(m,mid));       PK(m).mid = mid(loc);       try PK(m).mid = PK(m).mid(1);       catch PK(m).mid = NaN;      end
-        [val loc] = findpeaks(md(m,late));      PK(m).late = late(loc);     try PK(m).late = PK(m).late(1);     catch PK(m).late = NaN;     end
-    end
+    for m = 1:size(md,1);
+        
 
     % Calculate distance from lesion
     %----------------------------------------------------------------------
@@ -141,23 +136,22 @@ for s = 1:length(sk)
     %======================================================================
     % Scatter time vs distance from original spike
     %----------------------------------------------------------------------
-    figure(1), subplot(2,1,1)
     
-    scatter([PK.early]- min([PK.early]), lesdis, 100, 'filled'); hold on
-
-    subplot(2,1,2)
-    scatter([PK.late] - min([PK.late]), lesdis, 100, 'filled'); hold on
-
-
     % Plot settings
     cmap = flip(cbrewer('div', 'Spectral', max(lesdis)+1));
-    figure(2), subplot(ceil(length(sk)/2),2,s)
+    figure(1), subplot(ceil(length(sk)/2),2,s)
+
 
     for m = 1:size(md,1)
         plot(md(m,:), 'color', cmap(lesdis(m)+1,:)); hold on
         xlim([1 Inf]);
     end
 
+    
+%     figure(2)
+%         [pv pt] = max(md(:,woi)');
+%         scatter(pt - min(pt), lesdis, 100, 'filled'); hold on;
+%     
 end
 
 
