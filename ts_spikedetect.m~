@@ -1,8 +1,8 @@
 if ~exist('D'),   D = ts_housekeeping;    end
 fs    = filesep;
 Fdata = D.Fdata;
-
-edflist = cellstr(spm_select('FPlist', Fdata, '^*.edf$'));
+%%
+edflist = cellstr(spm_select('FPlist', Fdata, '^*.EDF$'));
 clear E
 for e = 1:length(edflist)
     hdr = ft_read_header(edflist{e});
@@ -22,7 +22,7 @@ for e = 1:length(edflist)
 
 end
 
-% Find spikes that are close together
+%% Find spikes that are close together
 %--------------------------------------------------------------------------
 win = 0.5 * hdr.Fs;
 k   = 0;
@@ -54,7 +54,7 @@ clear gS
 
 for s = 1:length(Sp) - 1
     dt = Sp(s+1).t - Sp(s).t; 
-    if dt > win
+    if dt > win || Sp(s).f ~= Sp(s+1).f
         if length(unique([Sp(first:s).c])) > 1
             gS(k).t = [Sp(first:s).t];
             gS(k).c = [Sp(first:s).c];
