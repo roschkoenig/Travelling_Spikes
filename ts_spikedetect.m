@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 if ~exist('D'),   D = ts_housekeeping;    end
 fs    = filesep;
 Fdata = D.Fdata;
@@ -11,7 +10,6 @@ fs          = filesep;
 Fdata       = D.Fdata;
 edflist     = cellstr(spm_select('FPlist', Fdata, '^*.edf$'));
 doplot      = 0;
->>>>>>> 65935f628ef17f84bb4d6db0c184f1d1fddc654d
 clear E
 
 % Loop through electrodes (i.e. shanks) of interest
@@ -51,7 +49,7 @@ for ei = 1:length(eoi)
     win = 0.2 * hdr.Fs;
     k   = 0;
 
-<<<<<<< HEAD
+
 %% Find spikes that are close together
 %--------------------------------------------------------------------------
 win = 0.1 * hdr.Fs;
@@ -61,8 +59,6 @@ k   = 0;
     for s = 1:length(E(e).spkt)
         ul  = E(e).spkt(s) + win;
         ll  = E(e).spkt(s) - win;
->>>>>>> 65935f628ef17f84bb4d6db0c184f1d1fddc654d
-
         grp = find(E(e).spkt > ll & E(e).spkt < ul);
         if length(grp) >= 2
             k = k + 1; 
