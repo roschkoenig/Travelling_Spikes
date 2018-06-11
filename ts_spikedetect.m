@@ -9,7 +9,7 @@
 % subject should have their own folder named with the subject name
 % Patient details are defined in ts_patients - including electrode labels
 %--------------------------------------------------------------------------
-sub         = 'EsPa';
+sub         = 'JaHo';
 try
     D   = ts_housekeeping;
 catch
@@ -27,7 +27,7 @@ edflist     = cellstr(spm_select('FPlist', Fdata, '^*.edf$'));
 doplot      = 0;
 clear E
 
-%% Loop through electrodes (i.e. shanks) of interest
+% Loop through electrodes (i.e. shanks) of interest
 %==========================================================================
 for ei = 1:length(eoi)
     clear Sp
