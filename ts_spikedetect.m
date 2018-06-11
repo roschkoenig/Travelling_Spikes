@@ -7,11 +7,11 @@
 % towards a scripts folder (where all the scripts are saved), and a data
 % folder (where all the patient data are saved). In the data folder, each
 % subject should have their own folder named with the subject name
-% Patient details are defined in ts_patients - including electrode labels 
+% Patient details are defined in ts_patients - including electrode labels
 %--------------------------------------------------------------------------
 sub         = 'EsPa';
-try     
-    D   = ts_housekeeping;  
+try
+    D   = ts_housekeeping;
 catch
     dfile = cellstr(spm_select(1, 'any', 'Please select the ts_housekeeping.m file'));
     [dpath dfile]   = fileparts(dfile{1});
@@ -33,7 +33,7 @@ for ei = 1:length(eoi)
     clear Sp
     disp(['Currently on electrode ' num2str(ei) ' of ' num2str(length(eoi)) ': ' eoi{ei}]);
     disp('Loading datasets');
-    
+
     % Load and preprocess relevant data
     %----------------------------------------------------------------------
     for e = 1:length(edflist)
@@ -47,8 +47,8 @@ for ei = 1:length(eoi)
         El.lbl  = hdr.label;
         El.eoi  = eoi{ei};
         shk     = ts_shankfind(El);
-        
-        chid    = [shk.ind]; 
+
+        chid    = [shk.ind];
         shdat   = dat(chid,:)';
         clear spkt spkc
         try [spkt spkc]  = DetectSpike_GC(shdat, hdr.Fs, hdr.nSamples / hdr.Fs / 60); end
@@ -64,19 +64,24 @@ for ei = 1:length(eoi)
     win = 0.2 * hdr.Fs;
     k   = 0;
 
+
+%% Find spikes that are close together
+%--------------------------------------------------------------------------
+win = 0.1 * hdr.Fs;
+k   = 0;
+=======
     for e = 1:length(E)
     for s = 1:length(E(e).spkt)
         ul  = E(e).spkt(s) + win;
         ll  = E(e).spkt(s) - win;
-
         grp = find(E(e).spkt > ll & E(e).spkt < ul);
         if length(grp) >= 2
-            k = k + 1; 
+            k = k + 1;
             Sp(k).t = E(e).spkt(s);
             Sp(k).c = E(e).spkc(s);
             Sp(k).f = e;
         end
-    end 
+    end
     end
 
     [std stg] = sort([Sp.t]);   Sp = Sp(stg);
@@ -91,7 +96,7 @@ for ei = 1:length(eoi)
     clear gS
 
     for s = 1:length(Sp) - 1
-        dt = Sp(s+1).t - Sp(s).t; 
+        dt = Sp(s+1).t - Sp(s).t;
         if dt > win || Sp(s).f ~= Sp(s+1).f
             if length(unique([Sp(first:s).c])) > 2
                 gS(k).t = [Sp(first:s).t];
@@ -120,7 +125,7 @@ for ei = 1:length(eoi)
 
             clf
             for d = 1:size(dat,1)
-                plot(dat(d,:) + 1000*d); hold on 
+                plot(dat(d,:) + 1000*d); hold on
             end
             title(['Plot ' num2str(g) ' of ' num2str(length(gS))])
             pause();
@@ -142,13 +147,13 @@ for ei = 1:length(eoi)
         xlabel('time in ms');
         plot([0 Inf], [0 0], 'k');
     end
-    
+
     % Pack up stuff you want to save from eternal damnation from the loop
     %----------------------------------------------------------------------
     SPK(ei).El = El;
     SPK(ei).gS = gS;
     SPK(ei).shk = shk;
-    
+
 end
 
 save([Fdata fs 'SPK'], 'SPK');
