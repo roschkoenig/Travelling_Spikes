@@ -1,4 +1,4 @@
-sub     = 'EsPa';
+sub     = 'JaHo';
 D       = ts_housekeeping;
 Fdata   = [D.Fdata fs sub];
 fs      = filesep;
@@ -8,7 +8,7 @@ load([Fdata fs 'SPK.mat']);
 %--------------------------------------------------------------------------
 [num txt rw]    = xlsread(spm_select('FPList', Fdata, '^.*.xlsx$'));
 
-elcell          = regexp(rw(1,:), 'electrode');
+elcell          = regexp(rw(1,:), '^electrode$');
 elcol           = find(~cellfun(@isempty, elcell));
 
 nmcell          = regexp(rw(1,:), 'contact number');
