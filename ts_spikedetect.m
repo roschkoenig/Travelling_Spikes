@@ -1,12 +1,33 @@
-D           = ts_housekeeping;   
-eoi         = {'A', 'B', 'C', 'D', 'E', 'F', 'B''', 'C''', 'F''' };
+% TS Spike Detection
+%==========================================================================
+% This script will take EDF files, adn detect group of spikes that occur in
+% short temporal windows across multiple channels on the same SEEG
+% electrode.
+% Folder strucutre is defined in ts_housekeeping.m - where you should point
+% towards a scripts folder (where all the scripts are saved), and a data
+% folder (where all the patient data are saved). In the data folder, each
+% subject should have their own folder named with the subject name
+% Patient details are defined in ts_patients - including electrode labels 
+%--------------------------------------------------------------------------
+sub         = 'EsPa';
+try     
+    D   = ts_housekeeping;  
+catch
+    dfile = cellstr(spm_select(1, 'any', 'Please select the ts_housekeeping.m file'));
+    [dpath dfile]   = fileparts(dfile{1});
+    addpath(dpath);
+    D   = ts_housekeeping;
+end
+
+P           = ts_patients(sub);
+eoi         = P.eoi;
 fs          = filesep;
-Fdata       = D.Fdata;
+Fdata       = [D.Fdata fs sub];
 edflist     = cellstr(spm_select('FPlist', Fdata, '^*.edf$'));
 doplot      = 0;
 clear E
 
-% Loop through electrodes (i.e. shanks) of interest
+%% Loop through electrodes (i.e. shanks) of interest
 %==========================================================================
 for ei = 1:length(eoi)
     clear Sp
