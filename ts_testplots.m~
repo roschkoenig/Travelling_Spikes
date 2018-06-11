@@ -6,13 +6,11 @@ load([Fdata fs 'SPK.mat']);
 
 % Load metdata
 %--------------------------------------------------------------------------
-[num txt rw]    = xlsread(spm_select('FPList', Fdata, '^.*.xlsx$'));
-
-elcell          = regexp(rw(1,:), 'electrode');
-elcol           = find(~cellfun(@isempty, elcell));
-
-nmcell          = regexp(rw(1,:), 'contact number');
-nmcol           = find(~cellfun(@isempty, nmcell));
+[num txt rw] = xlsread(spm_select('FPList', Fdata, '^.*.xlsx$'));
+[r elcol]    = find(strcmp(rw, 'electrode'));
+nmcell  = regexp(rw(1,:), 'contact number');
+nmcol   = find(cellfun(~@isempt
+[r nmcol]    = find(strcmp(rw, 'contact number'));
 
 % Insert to spike information
 %--------------------------------------------------------------------------
