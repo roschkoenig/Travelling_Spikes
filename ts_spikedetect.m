@@ -63,13 +63,7 @@ for ei = 1:length(eoi)
     %--------------------------------------------------------------------------
     win = 0.2 * hdr.Fs;
     k   = 0;
-
-
-%% Find spikes that are close together
-%--------------------------------------------------------------------------
-win = 0.1 * hdr.Fs;
-k   = 0;
-=======
+    
     for e = 1:length(E)
     for s = 1:length(E(e).spkt)
         ul  = E(e).spkt(s) + win;
