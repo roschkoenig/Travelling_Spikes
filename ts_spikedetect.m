@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-D           = ts_housekeeping;   
-eoi         = {'A', 'B', 'C', 'D', 'E', 'F', 'G'};
-fs          = filesep;
-Fdata       = D.Fdata;
-edflist     = cellstr(spm_select('FPlist', Fdata, '^*.(edf)|(EDF)$'));
-=======
 % TS Spike Detection
 %==========================================================================
 % This script will take EDF files, adn detect group of spikes that occur in
@@ -29,9 +22,10 @@ end
 P           = ts_patients(sub);
 eoi         = P.eoi;
 fs          = filesep;
+
 Fdata       = [D.Fdata fs sub];
 edflist     = cellstr(spm_select('FPlist', Fdata, '^*.edf$'));
->>>>>>> cc2f3fea57649cc696af2d3ed742a876e6ac7ec2
+
 doplot      = 0;
 clear E
 
@@ -56,16 +50,12 @@ for ei = 1:length(eoi)
         %------------------------------------------------------------------
         El.lbl  = hdr.label;
         El.eoi  = eoi{ei};
-<<<<<<< HEAD
+
         shk     = ts_shankfind(El)
-        
-        chid    = [shk.ind]; 
-=======
-        shk     = ts_shankfind(El);
 
         chid    = [shk.ind];
->>>>>>> cc2f3fea57649cc696af2d3ed742a876e6ac7ec2
         shdat   = dat(chid,:)';
+
         clear spkt spkc
         try [spkt spkc]  = DetectSpike_GC(shdat, hdr.Fs, hdr.nSamples / hdr.Fs / 60); end
         if exist('spkt')
@@ -79,7 +69,7 @@ for ei = 1:length(eoi)
     %--------------------------------------------------------------------------
     win = 0.1 * hdr.Fs;
     k   = 0;
-    
+
     for e = 1:length(E)
     for s = 1:length(E(e).spkt)
         ul  = E(e).spkt(s) + win;
