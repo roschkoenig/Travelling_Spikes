@@ -1,13 +1,18 @@
+sub     = 'JaHo';
 D       = ts_housekeeping;
-Fdata   = D.Fdata;
+Fdata   = [D.Fdata fs sub];
 fs      = filesep;
 load([Fdata fs 'SPK.mat']);
 
 % Load metdata
 %--------------------------------------------------------------------------
-[num txt rw] = xlsread(spm_select('FPList', Fdata, '^.*.xlsx$'));
-[r elcol]    = find(strcmp(rw, 'electrode'));
-[r nmcol]    = find(strcmp(rw, 'contact number'));
+[num txt rw]    = xlsread(spm_select('FPList', Fdata, '^.*.xlsx$'));
+
+elcell          = regexp(rw(1,:), '^electrode$');
+elcol           = find(~cellfun(@isempty, elcell));
+
+nmcell          = regexp(rw(1,:), 'contact number');
+nmcol           = find(~cellfun(@isempty, nmcell));
 
 % Insert to spike information
 %--------------------------------------------------------------------------
@@ -17,7 +22,7 @@ for s = 1:length(SPK)
     SPK(s).les  = [thise num2str(rw{lesrow, nmcol})];
 end
 
-%% Plot some average waveforms - average the first spike for each electrode
+% Plot some average waveforms - average the first spike for each electrode
 %--------------------------------------------------------------------------
 k = 1;
 clear sk
@@ -68,7 +73,7 @@ for s = 1:length(SPK)
     
 end
 
-%%
+
 for s = 1:length(sk) 
     
     % Calculate mean wave forms
@@ -88,11 +93,11 @@ for s = 1:length(sk)
 
     % Calculate distance from lesion
     %----------------------------------------------------------------------
-    cllist  = regexp(sk(s).lbl, ['^[A-Z]* ' SPK(s).les '$']);
+    cllist  = regexp(sk(s).lbl, [SPK(s).les '$']);
     les     = find(~cellfun(@isempty, cllist));
 
     clear lesdis
-    for l = 1:length(sk(s).lbl);
+    for l = 1:length(sk(s).lbl)
         nm = regexp(sk(s).lbl{l}, ['\d*$']);
         thisid = str2double(sk(s).lbl{l}(nm:end));
         lesid  = str2double(sk(s).lbl{les}(nm:end));

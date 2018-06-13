@@ -1,37 +1,8 @@
-<<<<<<< HEAD
 D           = ts_housekeeping;   
 eoi         = {'A', 'B', 'C', 'D', 'E', 'F', 'G'};
 fs          = filesep;
 Fdata       = D.Fdata;
 edflist     = cellstr(spm_select('FPlist', Fdata, '^*.(edf)|(EDF)$'));
-=======
-% TS Spike Detection
-%==========================================================================
-% This script will take EDF files, adn detect group of spikes that occur in
-% short temporal windows across multiple channels on the same SEEG
-% electrode.
-% Folder strucutre is defined in ts_housekeeping.m - where you should point
-% towards a scripts folder (where all the scripts are saved), and a data
-% folder (where all the patient data are saved). In the data folder, each
-% subject should have their own folder named with the subject name
-% Patient details are defined in ts_patients - including electrode labels
-%--------------------------------------------------------------------------
-sub         = 'JaHo';
-try
-    D   = ts_housekeeping;
-catch
-    dfile = cellstr(spm_select(1, 'any', 'Please select the ts_housekeeping.m file'));
-    [dpath dfile]   = fileparts(dfile{1});
-    addpath(dpath);
-    D   = ts_housekeeping;
-end
-
-P           = ts_patients(sub);
-eoi         = P.eoi;
-fs          = filesep;
-Fdata       = [D.Fdata fs sub];
-edflist     = cellstr(spm_select('FPlist', Fdata, '^*.edf$'));
->>>>>>> cc2f3fea57649cc696af2d3ed742a876e6ac7ec2
 doplot      = 0;
 clear E
 
@@ -43,7 +14,7 @@ for ei = 1:length(eoi)
     clear Sp
     disp(['Currently on electrode ' num2str(ei) ' of ' num2str(length(eoi)) ': ' eoi{ei}]);
     disp('Loading datasets');
-
+    
     % Load and preprocess relevant data
     %----------------------------------------------------------------------
     for e = 1:length(edflist)
@@ -56,15 +27,9 @@ for ei = 1:length(eoi)
         %------------------------------------------------------------------
         El.lbl  = hdr.label;
         El.eoi  = eoi{ei};
-<<<<<<< HEAD
         shk     = ts_shankfind(El)
         
         chid    = [shk.ind]; 
-=======
-        shk     = ts_shankfind(El);
-
-        chid    = [shk.ind];
->>>>>>> cc2f3fea57649cc696af2d3ed742a876e6ac7ec2
         shdat   = dat(chid,:)';
         clear spkt spkc
         try [spkt spkc]  = DetectSpike_GC(shdat, hdr.Fs, hdr.nSamples / hdr.Fs / 60); end
@@ -79,19 +44,20 @@ for ei = 1:length(eoi)
     %--------------------------------------------------------------------------
     win = 0.1 * hdr.Fs;
     k   = 0;
-    
+
     for e = 1:length(E)
     for s = 1:length(E(e).spkt)
         ul  = E(e).spkt(s) + win;
         ll  = E(e).spkt(s) - win;
+
         grp = find(E(e).spkt > ll & E(e).spkt < ul);
         if length(grp) >= 2
-            k = k + 1;
+            k = k + 1; 
             Sp(k).t = E(e).spkt(s);
             Sp(k).c = E(e).spkc(s);
             Sp(k).f = e;
         end
-    end
+    end 
     end
 
     [std stg] = sort([Sp.t]);   Sp = Sp(stg);
@@ -106,7 +72,7 @@ for ei = 1:length(eoi)
     clear gS
 
     for s = 1:length(Sp) - 1
-        dt = Sp(s+1).t - Sp(s).t;
+        dt = Sp(s+1).t - Sp(s).t; 
         if dt > win || Sp(s).f ~= Sp(s+1).f
             if length(unique([Sp(first:s).c])) > 2
                 gS(k).t = [Sp(first:s).t];
@@ -135,7 +101,7 @@ for ei = 1:length(eoi)
 
             clf
             for d = 1:size(dat,1)
-                plot(dat(d,:) + 1000*d); hold on
+                plot(dat(d,:) + 1000*d); hold on 
             end
             title(['Plot ' num2str(g) ' of ' num2str(length(gS))])
             pause();
@@ -157,13 +123,13 @@ for ei = 1:length(eoi)
         xlabel('time in ms');
         plot([0 Inf], [0 0], 'k');
     end
-
+    
     % Pack up stuff you want to save from eternal damnation from the loop
     %----------------------------------------------------------------------
     SPK(ei).El = El;
     SPK(ei).gS = gS;
     SPK(ei).shk = shk;
-
+    
 end
 
 save([Fdata fs 'SPK'], 'SPK');
