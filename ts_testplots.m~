@@ -40,9 +40,7 @@ for s = 1:length(SPK)
     
     % Load data of the spikes
     %----------------------------------------------------------------------
-    gi = 0;
     for g = 1:length(gS)
-        clear d h
         seppos = find(gS(g).f == '/' | gS(g).f == '\');
         fname  = gS(g).f(seppos(end)+1:end);
         fpath  = [Fdata fs fname];
@@ -60,22 +58,17 @@ for s = 1:length(SPK)
         
         % Load and preprocess data segment
         %------------------------------------------------------------------
-        if srt > 1 & stp < h.nSamples
-            d   = ft_read_data(fpath, 'begsample', srt, 'endsample', stp);
-            d   = ft_preproc_rereference(d);
-            d   = d(chid,:);
-            d   = ft_preproc_bandstopfilter(d, h.Fs, [49 51]);
-            d   = ft_preproc_bandpassfilter(d, h.Fs, [1 200]);
-            
-            % Pack up to save beyond loop
-            %------------------------------------------------------------------
-            gi = gi + 1;
-            sk(s).d(gi,:,:)  = d;  
-            
-        end
+        if stp
+        d   = ft_read_data(fpath, 'begsample', srt, 'endsample', stp);
+        d   = ft_preproc_rereference(d);
+        d   = d(chid,:);
+        d   = ft_preproc_bandstopfilter(d, h.Fs, [49 51]);
+        d   = ft_preproc_bandpassfilter(d, h.Fs, [1 200]);
         
+        % Pack up to save beyond loop
+        %------------------------------------------------------------------
+        sk(s).d(g,:,:)  = d;
     end    
-    
 	sk(s).el  	= SPK(s).El.eoi;
     GD        	= ts_artifact(sk(s).d);
     sk(s).d  	= sk(s).d(GD.trl, GD.chn, :);

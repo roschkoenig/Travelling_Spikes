@@ -9,7 +9,7 @@
 % subject should have their own folder named with the subject name
 % Patient details are defined in ts_patients - including electrode labels
 %--------------------------------------------------------------------------
-sub         = 'JaHo';
+sub         = 'SaKh';
 try
     D   = ts_housekeeping;
 catch
