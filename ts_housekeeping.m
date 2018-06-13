@@ -1,5 +1,6 @@
 function D = ts_housekeeping
 fs          = filesep;
+
 D.Fbase = '/Users/stasa.tumpa/Documents/GitHub';
 
 % if strcmp(computer, 'PCWIN64');

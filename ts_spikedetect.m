@@ -51,7 +51,7 @@ for ei = 1:length(eoi)
         El.lbl  = hdr.label;
         El.eoi  = eoi{ei};
 
-        shk     = ts_shankfind(El)
+        shk     = ts_shankfind(El);
 
         chid    = [shk.ind];
         shdat   = dat(chid,:)';
