@@ -42,6 +42,8 @@ end
 %--------------------------------------------------------------------------
 clear aic
 for s = 1:length(SPK)
+    
+    clear m
     o = SPK(s).o;
     n = 1:length(o);
     tab     = table(n', o', 'VariableNames', {'Space', 'Onset'});
@@ -49,43 +51,27 @@ for s = 1:length(SPK)
 
     % Uniform distribution
     %--------------------------------------------------------------------------
-    mdl     = fitglm(tab, 'Onset~1');
-    aic(1) = mdl.ModelCriterion.AIC;
+    m(1).mdl    = fitglm(tab, 'Onset~1');
+    m(1).bic    = m(1).mdl.ModelCriterion.BIC;
     
     % Gaussian distribution
     %--------------------------------------------------------------------------
     % f(x) = 1/(sig * sqrt(2*pi)) * exp(-(x-mu)^2 / (2*sig)^2)
-    f           = @(b,x) 1/(b(1) * sqrt(2*pi)) * exp(-(x(:,1) - b(2)) .^ 2 / (2*b(1))^2); 
-    beta0       = [ .5, length(n)/2 ];
-    mdl         = fitnlm(tab, f, beta0);
-    aic(2)   = mdl.ModelCriterion.AIC;
+    
+    f           = @(b,x) b(3)/(b(1) * sqrt(2*pi)) * exp(-(x(:,1) - b(2)) .^ 2 / (2*b(1))^2); 
+    beta0       = [10 1 1];
+    m(2).mdl    = fitnlm(tab, f, beta0);
+    m(2).bic    = m(2).mdl.ModelCriterion.BIC;
 
-    % Inverse quadratic distribution
-    %--------------------------------------------------------------------------
-    % f(x) = b(1) * x^2 + b(2) * x + b(3)
-    f           = @(b,x)  b(1) * x(:,1).^2 + b(2) * x(:,1) + b(3); 
-    beta0       = [ 1 1 1 ];
-    mdl         = fitnlm(tab, f, beta0);
-    aic(3)    = mdl.ModelCriterion.AIC;
-
-    % higher order polynomial distribution
-    %--------------------------------------------------------------------------
-    % f(x) = b(1) * x^4 + b(2) * x^2 + b(3)*x + b(4)*x + b(5)
-    f           = @(b,x) b(1) * x.^4 + b(2)*x.^3 + b(3)*x.^2 + b(4)*x + b(5);
-    beta0       = [1 1 1 1 1];
-    mdl         = fitnlm(tab,f,beta0);
-    aic(4)    = mdl.ModelCriterion.AIC;
-
-    [val loc]   = min(aic);
+    [val loc]       = min([m.bic]);
     winner{s}      = models{loc};
-
-end
-
-% Plotting histograms
-%--------------------------------------------------------------------------
-for k = 1:length(SPK)
-    subplot(ceil(length(SPK)/2),2,k)
-    bar(SPK(k).o);
-    title(winner{k});
-    ylim([0 mo]); 
+    
+  	subplot(ceil(length(SPK)/2),2,s)
+        bar(SPK(s).o); hold on
+        bf = (m(1).bic - m(2).bic)/2;
+        title([winner{s} ' Bayes Factor: ' num2str(bf)]);
+        ylim([0 mo]); 
+        
+        plot(predict(m(loc).mdl,n'));
+        
 end
