@@ -3,7 +3,7 @@ k = 0;
 clear shk
 
 for l = 1:length(El.lbl)
-    rx = [El.eoi '\d'];
+    rx = ['^' El.eoi '\d*$'];
     id = regexp(El.lbl{l}, rx);  
     if ~isempty(id)
         k = k + 1;

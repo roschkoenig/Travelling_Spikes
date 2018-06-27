@@ -43,6 +43,8 @@ for ei = 1:length(eoi)
         hdr = ft_read_header(edflist{e});
         dat = ft_read_data(edflist{e});
         dat = ft_preproc_bandpassfilter(dat, hdr.Fs, [1 100]);
+        dat = ft_preproc_bandstopfilter(dat, hdr.Fs, [49 51]);
+        dat = ft_preproc_rereference(dat);
         dat = dat - mean(dat,2);
 
         % Reduce to the channel set of interest
@@ -69,12 +71,12 @@ for ei = 1:length(eoi)
     win = 0.1 * hdr.Fs;
     k   = 0;
 
-    for e = 1:length(E)
-    for s = 1:length(E(e).spkt)
-        ul  = E(e).spkt(s) + win;
+    for e = 1:length(E)                 % Goes through all electrodes
+    for s = 1:length(E(e).spkt)         % Goes through each spike found
+        ul  = E(e).spkt(s) + win;       % Defines the window limits 
         ll  = E(e).spkt(s) - win;
-        grp = find(E(e).spkt > ll & E(e).spkt < ul);
-        if length(grp) >= 2
+        grp = find(E(e).spkt > ll & E(e).spkt < ul);    % Finds all spikes within the window
+        if length(grp) >= 2                             % Saves groups that are 3 or more spikes
             k = k + 1;
             Sp(k).t = E(e).spkt(s);
             Sp(k).c = E(e).spkc(s);
