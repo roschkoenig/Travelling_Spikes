@@ -15,7 +15,7 @@ d.label         = label;
 d.hdr.label     = label;
 d.hdr.chantype  = {};
 d.hdr.chanunit  = {};
-for k = 1:length(d.label);
+for k = 1:length(d.label)
     d.hdr.chantype{k} = 'EEG';
     d.hdr.chanunit{k} = 'mV';
 end

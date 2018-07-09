@@ -32,20 +32,20 @@ clear SPK E
 % Loop through electrodes (i.e. shanks) of interest
 %==========================================================================
 e_count = 0;
-for ei = 1:length(eoi)
+for ei = 1 %:length(eoi)
     clear Sp
     disp(['Currently on electrode ' num2str(ei) ' of ' num2str(length(eoi)) ': ' eoi{ei}]);
     disp('Loading datasets');
 
     % Load and preprocess relevant data
     %----------------------------------------------------------------------
-    for e = 1:length(edflist)
+    for e = 1 %:length(edflist)
         hdr = ft_read_header(edflist{e});
         dat = ft_read_data(edflist{e});
 
         clear spkt spkc
-        try [spkt spkc spft]  = DetectSpike_GC(dat', hdr.Fs); end  % 5, hdr.nSamples / hdr.Fs / 60, ...     % data, Fs, blocksize
-                                               % 70, 4, [7; 7; 100; 10; 10]); end
+        try [spkt spkc spft]  = DetectSpike_GC(dat, hdr.Fs, 5, hdr.nSamples / hdr.Fs / 60, ...     % data, Fs, blocksize
+                                               70, 4, [7; 7; 100; 10; 10]); end
         if exist('spkt')
             E(e).spkt = spkt;
             E(e).spkc = spkc;
