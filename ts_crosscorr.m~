@@ -1,6 +1,6 @@
 % ts_crosscorr
 
-sub         = 'AlCo';
+sub         = 'SaKh';
 fs          = filesep;
 
 try
@@ -15,14 +15,8 @@ end
 Fdata = [D.Fdata fs sub];
 
 %%
-meegfiles = cellstr(spm_select('FPList', Fdata, '^MEEG'));
-for m = 1 %:length(meegfiles)
-    D = spm_eeg_load(meegfiles{m});
-    
-end
+load([Fdata fs 'SPK.mat']);
 
-
-%%
 % Go through all spike groups
 for e = 1
 for g = 1
