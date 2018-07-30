@@ -9,9 +9,12 @@ for di = 1:size(D,3)
     bl      = d(:,bltime);
     zb      = zscore(bl);
     
+    bad(di,:)    = mean(abs(D(:,:,di)),2) > 1000;
     good(di,:) = sum(abs(zb) > 2.5, 2) == 0; 
     
 end
-
-good = find(sum(good) > 0.75 * size(D,3));
+bad  = max(bad);
+good = sum(good) > 0.75 * size(D,3);
+good = good - bad;
+good = find(good);
 
