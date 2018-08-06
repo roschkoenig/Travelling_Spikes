@@ -53,8 +53,71 @@ for h = 1:length(P(p,2).H)
     lm  = fitlm(prd(:), obs(:));
     R2(k) = lm.Rsquared.Ordinary;
     if k == 99,     disp([num2str(p) ' ' num2str(h)]);  end
-    
 end
 end
 
+%%
+PFull = P(:,2);
+PForw = PFull;
+
+for p = 1:length(PFull)
+    
+    [val core] = min(abs(str2double(PForw(p).Sname)));
+    val        = str2double(PForw(p).Sname{core});
+    deep       = find(str2double(PForw(p).Sname) < val);
+    supf       = find(str2double(PForw(p).Sname) > val);
+    
+    OF = zeros(size(PFull(p).A{1}));
+    OB = zeros(size(PFull(p).A{2}));
+    IF = zeros(size(PFull(p).A{1}));
+    IB = zeros(size(PFull(p).A{2}));
+    
+    if min(deep) < core
+    for d = 1:length(deep), dd = deep(d); OF(dd,dd+1) = 1; IB(dd+1,dd) = 1; end
+    for s = 1:length(supf), ss = supf(s); OB(ss,ss-1) = 1; IF(ss-1,ss) = 1; end
+    else
+	for d = 1:length(deep), dd = deep(d); OB(dd,dd-1) = 1; IF(dd-1,dd) = 1; end
+    for s = 1:length(supf), ss = supf(s); OF(ss,ss+1) = 1; IB(ss+1,ss) = 1; end
+    end
+    
+    % Full model
+    R{p,1} = PFull(p);
+    
+    % Outwards from core
+    %----------------------------------------------------------------------
+    m       = 2;
+    R{p,m} = PFull(p); 
+    R{p,m}.M.pC.A{2}     = OF;
+    R{p,m}.M.pC.A{1}     = OB;
+   
+    B = {};
+    for b = 1:length(PFull(p).B)
+        for d = 1:size(PFull(p).B,1), B{b} = zeros(size(PFull(p).B{b})); B{b}(d,d) = 1;  end
+        B{b}    = B{b} + OF + OB; 
+    end
+    R{p,m}.M.pC.B    = B;
+    
+   	% Inwards from core
+    %----------------------------------------------------------------------
+    m      = 3;
+    R{p,m} = PFull(p); 
+    R{p,m}.M.pC.A{2}     = IF;
+    R{p,m}.M.pC.A{1}     = IB;
+   
+    B = {};
+    for b = 1:length(PFull(p).B)
+        for d = 1:size(PFull(p).B,1), B{b} = zeros(size(PFull(p).B{b})); B{b}(d,d) = 1;  end
+        B{b}    = B{b} + IF + IB; 
+    end
+   
+    R{p,m}.M.pC.B    = B;
+
+end
+        
+%%
+
+[BMR, BMC, BMA] = spm_dcm_bmr(R);
+
+%%
+[post,exp_r,xp,pxp,bor] = spm_dcm_bmc(BMR);
 

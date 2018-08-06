@@ -18,7 +18,7 @@ Eoi = {RES(:,1).el};
 
 % Go through each electrode of interest
 %--------------------------------------------------------------------------
-for e = 1:length(Eoi) 
+for e = 1 %:length(Eoi) 
 
 % Find channels for which distance is available
 %--------------------------------------------------------------------------
