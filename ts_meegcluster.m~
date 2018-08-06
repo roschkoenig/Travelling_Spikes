@@ -18,7 +18,7 @@ Eoi = {RES(:,1).el};
 
 % Go through each electrode of interest
 %--------------------------------------------------------------------------
-for e = 1:length(Eoi) 
+for e = 1 %:length(Eoi) 
 
 % Find channels for which distance is available
 %--------------------------------------------------------------------------
@@ -65,11 +65,12 @@ for c = 1:realk
 %     mi = find(clust_lab == c);        % All spikes, and average within clusters
 %     clud(:,:,c) = mean(d(:,:,mi), 3);
 
-%     mi = randsample(mi,1);            % Take random selection per cluster
+%     mi = randsample(mi,1);            % All
 %     clud(:,:,c) = d(:,:,mi); 
 
-	[val mi] = min(dist(:,c));
-    clud(:,:,c)     = d(:,:,mi);
+	[val ind] = min(dist(:,c))
+    
+    
     
     % optional plotting routine
     %----------------------------------------------------------------------
